@@ -8,6 +8,20 @@ local pelvic_fin = false
 local anal_fin = false
 local soft_ray = false
 
+local head_value = 0
+local caudal_value = 0
+local pelvic_value = 0
+local anal_value = 0
+local soft_value = 0
+local h_value = 50
+
+local sliderHead
+local sliderCaudal
+local sliderAnal
+local sliderPelvic
+local sliderSoft
+local sliderH
+
 local s1 = audio.loadSound( "sound1.wav" );
 local s2 = audio.loadSound( "sound2.wav" );
 local s3 = audio.loadSound( "sound3.wav" );
@@ -269,6 +283,7 @@ local function sliderListener(event)
             else
                 anim:setFrame(4)
             end
+            head_value = event.target.value
         elseif event.target.id == 'caudal_fin' then
             if event.target.value <= 20 then
                 anim7:setFrame(1)
@@ -281,6 +296,7 @@ local function sliderListener(event)
             else
                 anim7:setFrame(5)
             end
+            caudal_value = event.target.value
         elseif event.target.id == 'pelvic_fin' then
             if event.target.value <= 33 then
                 anim4:setFrame(1)
@@ -289,12 +305,14 @@ local function sliderListener(event)
             else
                 anim4:setFrame(3)
             end
+            pelvic_value = event.target.value
         elseif event.target.id == 'anal_fin' then
             if event.target.value <= 50 then
                 anim5:setFrame(1)
             else
                 anim5:setFrame(2)
             end
+            anal_value = event.target.value
         elseif event.target.id == 'soft_ray' then
             if event.target.value <= 33 then
                 anim6:setFrame(1)
@@ -303,8 +321,24 @@ local function sliderListener(event)
             else
                 anim6:setFrame(3)
             end
+            soft_value = event.target.value
         elseif event.target.id == 'h_move' then
             group.x = event.target.value * 10
+            h_value = event.target.value
+        end
+    else
+        if event.target.id == 'head' then
+            sliderHead:setValue(head_value)
+        elseif event.target.id == 'caudal_fin' then
+            sliderCaudal:setValue(caudal_value)
+        elseif event.target.id == 'pelvic_fin' then
+            sliderPelvic:setValue(pelvic_value)
+        elseif event.target.id == 'anal_fin' then
+            sliderAnal:setValue(anal_value)
+        elseif event.target.id == 'soft_ray' then
+            sliderSoft:setValue(soft_value)
+        elseif event.target.id == 'h_move' then
+            sliderH:setValue(h_value)
         end
     end
 end
@@ -316,25 +350,24 @@ local spaceText = 12
 
 local mouth = display.newText( "Mouth", sliderX - 120, sliderY + spaceText, native.systemFont, 40 )
 mouth:setFillColor( 1, 1, 1 )
-local sliderHead = widget.newSlider(
+sliderHead = widget.newSlider(
     {
         top = sliderY,
         left = sliderX,
         width = 400,
-        value = 0,  -- Start slider at 10% (optional)
+        value = head_value,  -- Start slider at 10% (optional)
         listener = sliderListener,
         id = 'head'
     }
 )
-
 local caudal = display.newText( "Caudal fin", sliderX - 150, sliderY + space + 15, native.systemFont, 40 )
 caudal:setFillColor( 1, 1, 1 )
-local sliderCaudal = widget.newSlider(
+sliderCaudal = widget.newSlider(
     {
         top = sliderY+space,
         left = sliderX,
         width = 400,
-        value = 0,  -- Start slider at 10% (optional)
+        value = caudal_value,  -- Start slider at 10% (optional)
         listener = sliderListener,
         id = 'caudal_fin'
     }
@@ -342,12 +375,12 @@ local sliderCaudal = widget.newSlider(
 
 local pelvic = display.newText( "Pelvic fin", sliderX - 140, sliderY + space * 2 + 18, native.systemFont, 40 )
 pelvic:setFillColor( 1, 1, 1 )
-local sliderPelvic = widget.newSlider(
+sliderPelvic = widget.newSlider(
     {
         top = sliderY + 2 * space,
         left = sliderX,
         width = 400,
-        value = 0,  -- Start slider at 10% (optional)
+        value = pelvic_value,  -- Start slider at 10% (optional)
         listener = sliderListener,
         id = 'pelvic_fin'
     }
@@ -355,12 +388,12 @@ local sliderPelvic = widget.newSlider(
 
 local anal = display.newText( "Anal fin", sliderX - 130, sliderY + space * 3 + 21, native.systemFont, 40 )
 anal:setFillColor( 1, 1, 1 )
-local sliderAnal = widget.newSlider(
+sliderAnal = widget.newSlider(
     {
         top = sliderY + 3 * space,
         left = sliderX,
         width = 400,
-        value = 0,  -- Start slider at 10% (optional)
+        value = anal_value,  -- Start slider at 10% (optional)
         listener = sliderListener,
         id = 'anal_fin'
     }
@@ -368,12 +401,12 @@ local sliderAnal = widget.newSlider(
 
 local soft = display.newText( "Soft ray", sliderX - 130, sliderY + space * 4 + 24, native.systemFont, 40 )
 soft:setFillColor( 1, 1, 1 )
-local sliderSoft = widget.newSlider(
+sliderSoft = widget.newSlider(
     {
         top = sliderY + 4 * space,
         left = sliderX,
         width = 400,
-        value = 0,  -- Start slider at 10% (optional)
+        value = soft_value,  -- Start slider at 10% (optional)
         listener = sliderListener,
         id = 'soft_ray'
     }
@@ -381,12 +414,12 @@ local sliderSoft = widget.newSlider(
 
 local move = display.newText( "H.move", sliderX - 140, sliderY + space * 5 + 27, native.systemFont, 40 )
 move:setFillColor( 1, 1, 1 )
-local sliderSoft = widget.newSlider(
+sliderH = widget.newSlider(
     {
         top = sliderY + 5 * space,
         left = sliderX,
         width = 400,
-        value = 50,  -- Start slider at 10% (optional)
+        value = h_value,  -- Start slider at 10% (optional)
         listener = sliderListener,
         id = 'h_move'
     }
