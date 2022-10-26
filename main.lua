@@ -1,13 +1,22 @@
-local widget = require( "widget" )
+--Name: Alan Subedi
+--CS-371 (Fall 2022)
 
-local touch = true
+--importing widget library here
+local widget = require( "widget" )  
 
+--if touch is true then slider is diabled and touch is enabled else the opposite is true
+local touch = true                  
+
+--these 5 variables keep track of where or not head, caudal, pelvic, anal, soft were previously turned on during the touch portion
+--initially it is false because they are off when the program starts
 local head = false
 local caudal_fin = false
 local pelvic_fin = false
 local anal_fin = false
 local soft_ray = false
 
+--these 5 variables keep track of the slider values for each of the different sprite components
+--these values will later be used to disable the slider when touch is clicked
 local head_value = 0
 local caudal_value = 0
 local pelvic_value = 0
@@ -15,6 +24,7 @@ local anal_value = 0
 local soft_value = 0
 local h_value = 50
 
+--these are global slider variables for each of the 5 sliders
 local sliderHead
 local sliderCaudal
 local sliderAnal
@@ -22,12 +32,14 @@ local sliderPelvic
 local sliderSoft
 local sliderH
 
+--these are 5 different sounds for 5 different sprite components
 local s1 = audio.loadSound( "sound1.wav" );
 local s2 = audio.loadSound( "sound2.wav" );
 local s3 = audio.loadSound( "sound3.wav" );
 local s4 = audio.loadSound( "sound4.wav" );
 local s5 = audio.loadSound( "sound5.wav" );
 
+--in this portion i am setting the different frames for the sprite components
 local opt =
 {
 	frames = {
@@ -55,9 +67,11 @@ local opt =
 	}
 }
 
-
+--here I am connecting the previous frame to which image the those should be using for it
 local sheet = graphics.newImageSheet( "dragon.png", opt);
 
+--these are the different sequence for each of the frame compoennt
+--for exmaple head uses frame 1,2,3,4 and those can switch every 800mil,  -> similar for others
 local seqData = {
 	{name = "head", frames={1,2,3,4}, time=800},
 	{name = "caudal_fin", frames={5,6,7,8,9}, time = 800},
@@ -70,9 +84,12 @@ local seqData = {
     {name = "main_body", start=21, count=1, time=800}
 }
 
+--these two variables are init x and y co-ordinates which the different sprite
+--compoennts will be using as a refrences later
 local xRef = display.contentCenterX - 700
 local yRef = 250
 
+--adding head compoennt to the appropriate co-ordinate
 local anim = display.newSprite (sheet, seqData);
 anim.anchorX = 0.5;
 anim.anchorY = 0.5;
@@ -83,6 +100,7 @@ anim.yScale = 3;
 anim:setSequence("head");
 anim:pause();
 
+--adding mainbody compoennt to the appropriate co-ordinate
 local anim2 = display.newSprite (sheet, seqData);
 anim2.anchorX = 0.5;
 anim2.anchorY = 0.5;
@@ -93,6 +111,7 @@ anim2.yScale = 3;
 anim2:setSequence("main_body");
 anim2:pause();
 
+--adding wing compoennt to the appropriate co-ordinate
 local anim3 = display.newSprite (sheet, seqData);
 anim3.anchorX = 0.5;
 anim3.anchorY = 0.5;
@@ -103,6 +122,7 @@ anim3.yScale = 3;
 anim3:setSequence("wing_top");
 anim3:pause();
 
+--adding pelvicFin compoennt to the appropriate co-ordinate
 local anim4 = display.newSprite (sheet, seqData);
 anim4.anchorX = 0.5;
 anim4.anchorY = 0.5;
@@ -113,6 +133,7 @@ anim4.yScale = 3;
 anim4:setSequence("pelvic_fin");
 anim4:pause();
 
+--adding analFin compoennt to the appropriate co-ordinate
 local anim5 = display.newSprite (sheet, seqData);
 anim5.anchorX = 0.5;
 anim5.anchorY = 0.5;
@@ -123,6 +144,7 @@ anim5.yScale = 3;
 anim5:setSequence("anal_fin");
 anim5:pause();
 
+--adding softRay compoennt to the appropriate co-ordinate
 local anim6 = display.newSprite (sheet, seqData);
 anim6.anchorX = 0.5;
 anim6.anchorY = 0.5;
@@ -133,6 +155,7 @@ anim6.yScale = 3;
 anim6:setSequence("soft_ray");
 anim6:pause();
 
+--adding caudalFin compoennt to the appropriate co-ordinate
 local anim7 = display.newSprite (sheet, seqData);
 anim7.anchorX = 0.5;
 anim7.anchorY = 0.5;
@@ -143,6 +166,7 @@ anim7.yScale = 3;
 anim7:setSequence("caudal_fin");
 anim7:pause();
 
+--adding all the different frame to the same group
 local group = display.newGroup()
 group:insert(anim)
 group:insert(anim2)
@@ -152,8 +176,13 @@ group:insert(anim5)
 group:insert(anim6)
 group:insert(anim7)
 
+--the whole group's x is moved by 500
 group.x = 10 * 50
 
+--this method is called when the touch is true/false
+--if the touch is true and one of the sprite component is called then it is either turned on or off based on
+--the boolean variable that was set before and it is also constantly updated here as well.
+--audio is played as well based on every click to each sprite body component 
 local function spriteListener( event )
     if touch == true then
         if event.target.sequence == 'head' then
@@ -219,12 +248,15 @@ local function spriteListener( event )
     end
 end
 
+--in this section, tap event listeners to each of the sprite component is being added
 anim:addEventListener("tap", spriteListener) -- head
 anim4:addEventListener("tap", spriteListener) -- pelvic
 anim5:addEventListener("tap", spriteListener) -- anal
 anim6:addEventListener("tap", spriteListener) -- soft
 anim7:addEventListener("tap", spriteListener) -- caudal
 
+--if touch radio button is selected then it is set to true
+--if slider radio button is selected then touch is set to false and hence slider is true as a result
 local function onSwitchPress(event)
     if event.target.id == 'RadioButton1' then
         touch = true
@@ -233,13 +265,17 @@ local function onSwitchPress(event)
     end
 end
 
-
+--again, buttonX and buttonY serves as refrences for co-ordinates to the radio buttons
 local buttonX = -300
 local buttonY = display.contentCenterY + 100
+
+--initializing group for the radio-button
 local button_group = display.newGroup()
 
+--adding Touch text at the given co-ordinate
 local myText = display.newText( "Touch", buttonX + 180, buttonY+30, native.systemFont, 50 )
 myText:setFillColor( 1, 1, 1 )
+--adding touch radio-button
 local radioButton1 = widget.newSwitch(
     {
         left = buttonX,
@@ -254,10 +290,13 @@ local radioButton1 = widget.newSwitch(
         onPress = onSwitchPress
     }
 )
+--adding touch radio button to the button group
 button_group:insert(radioButton1)
 
+--adding Slider text at the given co-ordinate
 local myText2 = display.newText( "Slider", buttonX + 180, buttonY+130, native.systemFont, 50 )
 myText2:setFillColor( 1, 1, 1 )
+--adding slider radio-button
 local radioButton2 = widget.newSwitch(
     {
         left = buttonX,
@@ -269,8 +308,14 @@ local radioButton2 = widget.newSwitch(
         onPress = onSwitchPress
     }
 )
+--adding slider radio button to the button group
 button_group:insert(radioButton2)
 
+--this function is basically a slider event listener
+--if touch is false then we basically set the frame of whatever slider component is
+--selected
+--if touch is true then we do spriteComponent:setValue( whatever sprite is ) to disable slider while
+-- touch is on
 local function sliderListener(event)
     if touch == false then
         if event.target.id == 'head' then
@@ -343,13 +388,17 @@ local function sliderListener(event)
     end
 end
 
+--again these variables are co-ordinate references for the 5 different slider components
+-- which will be added later on
 local sliderX = 700
 local sliderY = 450
 local space = 70
 local spaceText = 12
 
+--add "mouth" text here for mouth slider
 local mouth = display.newText( "Mouth", sliderX - 120, sliderY + spaceText, native.systemFont, 40 )
 mouth:setFillColor( 1, 1, 1 )
+--initialized slider for head
 sliderHead = widget.newSlider(
     {
         top = sliderY,
@@ -360,8 +409,11 @@ sliderHead = widget.newSlider(
         id = 'head'
     }
 )
+
+--add "caudal fin" text here for caudal_fin slider
 local caudal = display.newText( "Caudal fin", sliderX - 150, sliderY + space + 15, native.systemFont, 40 )
 caudal:setFillColor( 1, 1, 1 )
+--initialized slider for caudal fin
 sliderCaudal = widget.newSlider(
     {
         top = sliderY+space,
@@ -373,8 +425,10 @@ sliderCaudal = widget.newSlider(
     }
 )
 
+--add "pelvic fin" text here for pelvic fin slider
 local pelvic = display.newText( "Pelvic fin", sliderX - 140, sliderY + space * 2 + 18, native.systemFont, 40 )
 pelvic:setFillColor( 1, 1, 1 )
+--initialize slider for pelvic fin
 sliderPelvic = widget.newSlider(
     {
         top = sliderY + 2 * space,
@@ -386,8 +440,10 @@ sliderPelvic = widget.newSlider(
     }
 )
 
+--add "anal fin" text here for anal fin slider
 local anal = display.newText( "Anal fin", sliderX - 130, sliderY + space * 3 + 21, native.systemFont, 40 )
 anal:setFillColor( 1, 1, 1 )
+--initialize slider for anal fin
 sliderAnal = widget.newSlider(
     {
         top = sliderY + 3 * space,
@@ -399,8 +455,10 @@ sliderAnal = widget.newSlider(
     }
 )
 
+--add "soft ray" text here for soft ray slider
 local soft = display.newText( "Soft ray", sliderX - 130, sliderY + space * 4 + 24, native.systemFont, 40 )
 soft:setFillColor( 1, 1, 1 )
+--initialize slider for soft ray
 sliderSoft = widget.newSlider(
     {
         top = sliderY + 4 * space,
@@ -412,8 +470,10 @@ sliderSoft = widget.newSlider(
     }
 )
 
+--add "h.move" text for h.move slider
 local move = display.newText( "H.move", sliderX - 140, sliderY + space * 5 + 27, native.systemFont, 40 )
 move:setFillColor( 1, 1, 1 )
+--initialize slider for h move
 sliderH = widget.newSlider(
     {
         top = sliderY + 5 * space,
@@ -425,8 +485,13 @@ sliderH = widget.newSlider(
     }
 )
 
+--this variable is basically used for making the fish move up or down
+--keeps track of whether down was previously true or not
 local down = false
 
+--this function makes the fish move up or down
+--if down was previously false then we move down
+--if down was previously true then we move up
 local update = function(event)
     if(down == false) then
         transition.to(group, {time = 100, y=10})
@@ -437,4 +502,6 @@ local update = function(event)
     end
 end
 
+--again timer for the fish body that move up and down
+--is triggered every 100ms
 timer.performWithDelay(100, update, 0)
